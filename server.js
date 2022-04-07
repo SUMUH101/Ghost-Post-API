@@ -24,11 +24,41 @@ const database ={
         created: new Date()
     }
         
+    ],
+
+    users:
+    [
+        {
+            userid: '123',
+            password: 'cookie',
+            fname: 'meth',
+            lname: 'amphetamine',
+            school: 'zoom uni',
+            email: 'meth.amp@zoom.edu',
+            phone: '123-456-7890'
+        },
+        {
+            userid: '125',
+            password: 'coke',
+            fname: 'mari',
+            lname: 'juana',
+            school: 'zoom uni',
+            email: 'mari.juan@zoom.edu',
+            phone: '098-765-4321'
+        }
+    ],
+
+    login: [
+        {
+            id: '987',
+            hash: '',
+            email: 'meth.amp@zoom.edu'
+        }
     ]
 }
 
 app.get('/',(req,res)=>{
-    res.send(database.sessions);
+    res.send(database.users);
 })
 
 app.post('/joinSession', (req,res)=>{
@@ -72,6 +102,49 @@ app.listen(3000,()=>{
     console.log('App is running on port 3000');
 });
 
+
+app.post('/signin', (req, res) => {
+
+    if(req.body.email === database.users[0].email && 
+            req.body.password === database.users[0].password){
+        res.json('success');
+    }else{
+        console.log(req.body.email, req.body.password)
+        res.status(400).json('Error logging in');
+    }
+})
+
+app.post('/register', (req, res) => {
+    const { email, password, fname } = req.body;
+    bcrypt.hash(password, null, null, function(err, hash) {
+        console.log(hash)
+    })
+    database.users.push({
+        userid: '1212',
+        password: password,
+        fname: fname,
+        lname: 'urie',
+        school: 'zoom uni',
+        email: email,
+        phone: '098-865-4321'
+    })
+
+    res.json(database.users[database.users.length-1]);
+})
+
+app.get('/profile/:userid', (req,res) => {
+    const { userid } = req.params;
+    let found = false;
+    database.users.forEach(user => {
+        if (user.userid === userid) {
+            found = true;
+            return res.json(user);
+        }
+    })
+    if (!found){
+        res.status(400).json('No such user')
+    }
+})
 
 /*
 // Load hash from your password DB.
