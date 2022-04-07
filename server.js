@@ -34,7 +34,7 @@ app.get('/',(req,res)=>{
 app.post('/joinSession', (req,res)=>{
    if (req.body.code === database.sessions[0].code)
    {
-       res.json(database.sessions[0]);
+       res.json('success');
    }else{
        res.status(400).json('Error joining session');
    }
